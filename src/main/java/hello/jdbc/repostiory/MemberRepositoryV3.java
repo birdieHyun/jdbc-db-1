@@ -128,9 +128,12 @@ public class MemberRepositoryV3 {
     private void close(Connection con, PreparedStatement pstmt, ResultSet rs) {
         JdbcUtils.closeResultSet(rs);
         JdbcUtils.closeStatement(pstmt);
-        //주의! 트랜잭션 동기화를 사용하려면 DataSourceUtils를 사용해야 한다.
 
+        //주의! 트랜잭션 동기화를 사용하려면 DataSourceUtils를 사용해야 한다.
         DataSourceUtils.releaseConnection(con, dataSource);
+        // releaseConnection은 커넥션을 바로 닫는 것이 아니다!
+        // 트랜잭션 동기화 매니저가 관리하는 커넥션이 있으면 해당 커넷션을 반환한다.
+        // 트랜잭션 동기화 매니저가 관리하는 커넥션이 없는 경우 해당 커넥션을 닫는다.
     }
 
     private Connection getConnection() throws SQLException {
